@@ -6,6 +6,8 @@ import { db } from "@/lib/db";
 import authConfig from "@/auth.config";
 import { getUserById } from "@/data/user";
 
+import { getTwoFactorConfirmationByUserId } from "./data/two-factor-confirmation";
+
 export const {
   handlers: { GET, POST },
   auth,
@@ -27,8 +29,6 @@ export const {
   },
   callbacks: {
     async signIn({ user, account }) {
-      console.log({ user, account });
-
       // Allow OAuth without email verification
       if (account?.provider !== "credentials") return true;
 
@@ -36,6 +36,19 @@ export const {
 
       // Prevent sign in without email verification
       if (!existingUser?.emailVerified) return false;
+
+      if (existingUser.isTwoFactorsEnable) {
+        const twoFactorConfirmation = await getTwoFactorConfirmationByUserId(
+          existingUser.id
+        );
+
+        if (!twoFactorConfirmation) return false;
+
+        // delete two factor confirmation the next signin
+        await db.twoFactorConfirmation.delete({
+          where: { id: twoFactorConfirmation.id },
+        });
+      }
 
       return true;
     },
