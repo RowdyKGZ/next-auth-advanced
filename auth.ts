@@ -62,6 +62,10 @@ export const {
       }
 
       if (session.user) {
+        session.user.isTwoFactorsEnable = token.isTwoFactorsEnable as boolean;
+      }
+
+      if (session.user) {
         session.user.name = token.name;
         session.user.email = token.email;
       }
@@ -78,6 +82,7 @@ export const {
       token.name = existingUser.name;
       token.email = existingUser.email;
       token.role = existingUser.role;
+      token.isTwoFactorsEnable = existingUser.isTwoFactorsEnable;
 
       return token;
     },
