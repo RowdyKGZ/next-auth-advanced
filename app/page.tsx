@@ -21,7 +21,7 @@ export default function Home() {
         <p className="text-wite text-lg">Simple authentication application</p>
 
         <div>
-          <LoginButton>
+          <LoginButton asChild>
             <Button variant="secondary" size="lg">
               Sign In
             </Button>
